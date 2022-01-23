@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>NeoLua</title>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            html,
+            body {
+                padding: 0;
+                margin: 0;
+            }
+            body {
+                background-color: #1a1b26;
+                color: #a9b1d6;
+                font-family: sans-serif;
+                display: flex;
+                flex-flow: row;
+            }
+            .navbar {
+                background-color: #16161e;
+                width: 18rem;
+                min-height: 100vh;
+                border-right: 1px solid #101014;
+            }
+            .navbar h2 {
+                padding: 2rem;
+                margin: 0;
+            }
+            .navbar ul {
+                margin: 0;
+                padding: 0;
+                list-style-type: none;
+                font-family: monospace;
+            }
+            .navbar li {
+                margin: 0;
+                padding: 1rem 2rem;
+                cursor: pointer;
+                user-select: none;
+            }
+            .navbar li:hover {
+                background-color: #13131a;
+            }
+            .content {
+                flex: 1;
+                display: flex;
+                flex-flow: column;
+            }
+            .content-header {
+                padding: 1.5rem;
+                background-color: #16161e;
+                border-bottom: 1px solid #101014;
+                font-family: monospace;
+                font-size: 1.15rem;
+                display: flex;
+            }
+            .save-button {
+                margin-left: auto;
+            }
+            .content-body {
+                padding: 2rem;
+                flex: 1;
+            }
+            .CodeMirror {
+                height: 100% !important;
+            }
+            h2 {
+                display: flex;
+                flex-flow: row;
+            }
+            h2 button {
+                margin-left: auto;
+            }
+        </style>
+        <link rel="stylesheet" href="lib/codemirror.css" />
+        <link rel="stylesheet" href="lib/theme/nord.css" />
+        <script src="lib/codemirror.js"></script>
+        <script src="lib/lua/lua.js"></script>
+    </head>
+    <body>
+        <div class="navbar">
+            <h2>
+                Files
+                <button id="new-button">New</button>
+            </h2>
+            <ul id="file-list"></ul>
+        </div>
+
+        <div class="content">
+            <div class="content-header">
+                <span id="title">$title</span>
+                <button id="save-button" class="save-button">Save</button>
+            </div>
+            <div class="content-body"></div>
+        </div>
+    </body>
+    <script>
+        let m = CodeMirror(document.getElementsByClassName('content-body')[0], {
+            value: '',
+            mode: 'lua',
+            lineNumbers: true,
+            theme: 'nord',
+        })
+
+        var currentFile = ''
+
+        async function reloadFiles() {
+            let resp = await fetch('api/files')
+            let json = await resp.json()
+
+            let fileList = document.getElementById('file-list')
+            fileList.innerHTML = ''
+            for (const item of json) {
+                let obj = document.createElement('li')
+                obj.innerText = item
+                obj.onclick = function () {
+                    loadFile(item)
+                }
+                fileList.appendChild(obj)
+            }
+        }
+        function saveCurrentFile() {
+            saveFile(currentFile, m.getValue())
+        }
+        function saveFile(name, content) {
+            fetch('api/files', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, content }),
+            })
+        }
+        async function loadFile(name) {
+            let resp = await fetch(`data/${name}`)
+            let json = await resp.text()
+            m.setValue(json)
+            document.getElementById('title').innerText = name
+            currentFile = name
+        }
+
+        document.getElementById('new-button').onclick = function () {
+            let filename = prompt('Enter filename')
+            if (filename == null || filename.trim() == '') return
+            filename = filename.trim()
+            console.log(filename)
+            saveFile(filename, '')
+            reloadFiles()
+        }
+        document.getElementById('save-button').onclick = saveCurrentFile
+
+        reloadFiles()
+    </script>
+</html>

@@ -1,0 +1,22 @@
+{
+    "name": "neolua",
+    "version": "1.0.0",
+    "description": "Lua web editor for Computer Craft",
+    "main": "src/index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Twometer/neolua.git"
+    },
+    "author": "Twometer",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/Twometer/neolua/issues"
+    },
+    "homepage": "https://github.com/Twometer/neolua#readme",
+    "dependencies": {
+        "express": "^4.17.2"
+    }
+}
