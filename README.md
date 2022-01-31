@@ -10,3 +10,7 @@ Script editor and distribution platform for ComputerCraft
 4. Upload that file to pastebin, note the paste ID
 5. In CC, run `pastebin get <your-id> neolua`
 6. Run any script from your server with `neolua <script-name>`, for example `neolua helloworld`
+
+## Screenshot
+
+![Screenshot](assets/screenshot.png)
