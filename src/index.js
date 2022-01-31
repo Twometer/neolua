@@ -4,7 +4,7 @@ const express = require('express')
 let app = express()
 app.use(express.json())
 
-const dataBaseFolder = __dirname + '../../data'
+const dataBaseFolder = '/app/data'
 
 app.listen(5050, () => {
     app.get('/api/files', (req, resp) => {
@@ -22,5 +22,5 @@ app.listen(5050, () => {
         resp.json({ status: 'ok' })
     })
     app.use('/data', express.static(dataBaseFolder))
-    app.use('/', express.static(__dirname + '/public'))
+    app.use('/', express.static('/app/sr/public'))
 })
